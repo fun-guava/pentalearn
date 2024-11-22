@@ -8,6 +8,7 @@ const buttonCreateEightStrings = document.getElementById('buttonCreateEightStrin
 
 // Constants
 const notes = ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#']
+const intervals_global = ['root','third','fourth','fifth','seventh']
 let whatIntervalIsPositionedWhenClicking = 'root'
 
 //#region PARAMETRES
@@ -35,12 +36,19 @@ const noteColour = 'rgba(120,120,120,0.8)'
 const metalbarColour = 'rgba(150,150,150,0.8)'
 const markColour = 'rgba(12,12,12,0.4)'
 const ghostColour = 'rgba(12,12,12,0.1)'
-const invtervalColours = {
+const intervalColours = {
     root: 'rgba(250,0,0,0.5)',
     third: 'rgba(250,125,0,0.3)', 
     fourth: 'rgba(250,250,0,0.3)',
     fifth: 'rgba(250,0,125,0.3)',
     seventh: 'rgba(250,0,250,0.3)'
+}
+const intervalColoursSolidEquivalent = {
+    root: 'rgb(253, 128, 128)',
+    third: 'rgb(254,216,179)', 
+    fourth: 'rgb(254,254,179)', 
+    fifth: 'rgb(254,179,216)', 
+    seventh: 'rgb(254,179,254)'
 }
 const focusWindowColour = 'rgba(50,150,175,0.7)'
 //#endregion
@@ -130,9 +138,9 @@ buttonColourIntervals.addEventListener('click', ()=>{
 
     // Individual interval buttons
     if (guitar.show.intervalColours) {
-        turn_visibility('on',['root','third','fourth','fifth','seventh'])
+        turn_visibility('on', intervals_global)
     } else {
-        turn_visibility('off',['root','third','fourth','fifth','seventh'])
+        turn_visibility('off', intervals_global)
     }
     guitar.refreshScreen()
 })
@@ -156,7 +164,7 @@ function listener_interval(int){
         guitar.scale[int].toggleVisibility()
         
         if (guitar.scale[int].isVisible) {
-            button.style.backgroundColor = invtervalColours[int]
+            button.style.backgroundColor = intervalColoursSolidEquivalent[int]
         } else {
             button.style.removeProperty('background-color')
         }
@@ -185,8 +193,11 @@ buttonFocusWindow.addEventListener('click', () => {
 
 // Select what to position on click
 const select = document.getElementById('selectWhatToPosition')
+select.style.backgroundColor = intervalColoursSolidEquivalent.root
 select.addEventListener('change', ()=>{
     whatIntervalIsPositionedWhenClicking = select.options[select.selectedIndex].textContent
+    document.getElementById('selectWhatToPosition').style.backgroundColor = intervalColoursSolidEquivalent[whatIntervalIsPositionedWhenClicking]
+
 })
 
 
@@ -204,6 +215,13 @@ buttonCreateEightStrings.addEventListener('click',()=>{
 function removeModal(){
     modal.remove()
 }
+
+
+// colour the dropdwon menu of options
+for (const interval of intervals_global){
+    document.getElementById(`option_${interval}`).style.backgroundColor = intervalColoursSolidEquivalent[interval]
+}
+
 
 //#endregion
 
@@ -314,7 +332,6 @@ class Guitar{
         }
     }
 
-    //CKHERE
     drawIntervalSymbols(){
         for (const string of this.strings){
             string.drawIntervalSymbol()
@@ -583,7 +600,7 @@ class PentatoncInterval{
         this.symbol = symbol
         this.steps = steps
         this.note = undefined
-        this.colour = invtervalColours[this.name]
+        this.colour = intervalColours[this.name]
         this.isVisible = true
         this.initialColour()
     }

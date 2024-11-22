@@ -29,19 +29,12 @@ button{
 }
 
 select {
-    margin-top: 14px;
+    /* margin-top: 14px; */
     padding: 5px;
-    background-color: aquamarine;
     border-radius: 20px;
 }
 
-option{
-    background-color:aquamarine;
-}
 
-#modalHolder{
-    position: relative;
-}
 
 #modal{
     display: flex;
