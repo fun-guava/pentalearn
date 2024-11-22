@@ -13,8 +13,8 @@ body{
     background-color: bisque;
 }
 
-.instructio{
-    font-size: smaller;
+.instruction{
+    font-size: 0.75rem;
 }
 button{
     margin-top: 7px;

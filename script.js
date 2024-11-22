@@ -49,8 +49,9 @@ const focusWindowColour = 'rgba(50,150,175,0.7)'
 
 
 //#region BUTTONS AND LISTENERS
-const buttonNotes = document.getElementById('buttonNotes')
-const buttonIntervals = document.getElementById('buttonIntervals')
+const buttonWriteNotes = document.getElementById('button_write_notes')
+const buttonWriteIntervals = document.getElementById('button_write_intervals')
+const buttonColourIntervals = document.getElementById('button_colour_intervals')
 const buttonFocusWindow = document.getElementById('buttonFocusWindow')
 
 canvas.addEventListener('mousemove', (e)=>{
@@ -89,25 +90,46 @@ canvas.addEventListener('click', (e) => {
     guitar.refreshScreen()
 })  
 
-//// show notes
-buttonNotes.addEventListener('click', ()=> {
+//// write notes
+buttonWriteNotes.addEventListener('click', ()=> {
     guitar.show.notes = !guitar.show.notes
-    if (guitar.show.notes) {buttonNotes.classList.add('button_on')}
-    else {buttonNotes.classList.remove('button_on')}
+    if (guitar.show.notes) {buttonWriteNotes.classList.add('button_on')}
+    else {buttonWriteNotes.classList.remove('button_on')}
+
+    // can't have notes and interval symbols at the same time
+    if (guitar.show.notes && guitar.show.intervalSymbols){
+        buttonWriteIntervals.click()
+    }
+
     guitar.refreshScreen()
 })
 
-/// Intervals
-buttonIntervals.addEventListener('click', ()=>{
-    guitar.show.intervals = !guitar.show.intervals
-    if (guitar.show.intervals){
-        buttonIntervals.classList.add('button_on')
+//// write interval symbols
+buttonWriteIntervals .addEventListener('click', ()=> {
+    guitar.show.intervalSymbols = !guitar.show.intervalSymbols
+    if (guitar.show.intervalSymbols) {buttonWriteIntervals.classList.add('button_on')}
+    else {buttonWriteIntervals.classList.remove('button_on')}
+
+    // can't have notes and interval symbols at the same time
+    if (guitar.show.notes && guitar.show.intervalSymbols){
+        buttonWriteNotes.click()
+    }
+
+    guitar.refreshScreen()
+})
+
+
+/// Colour Intervals
+buttonColourIntervals.addEventListener('click', ()=>{
+    guitar.show.intervalColours = !guitar.show.intervalColours
+    if (guitar.show.intervalColours){
+        buttonColourIntervals.classList.add('button_on')
     } else {
-        buttonIntervals.classList.remove('button_on')
+        buttonColourIntervals.classList.remove('button_on')
     }
 
     // Individual interval buttons
-    if (guitar.show.intervals) {
+    if (guitar.show.intervalColours) {
         turn_visibility('on',['root','third','fourth','fifth','seventh'])
     } else {
         turn_visibility('off',['root','third','fourth','fifth','seventh'])
@@ -117,7 +139,7 @@ buttonIntervals.addEventListener('click', ()=>{
 
 function turn_visibility(direction, ints){
     for (const int of ints){
-        const buttonName = "button_" + int + "s"
+        const buttonName = "button_colour_" + int
         const button = document.getElementById(buttonName)
         if (direction === 'on' && (!button.style.backgroundColor) ||
             direction === 'off' && (button.style.backgroundColor)
@@ -128,7 +150,7 @@ function turn_visibility(direction, ints){
 
 // create interval buttons (to determine their visibility)
 function listener_interval(int){
-    const buttonName = "button_" + int + "s"
+    const buttonName = "button_colour_" + int
     const button = document.getElementById(buttonName)
     button.addEventListener('click', ()=>{
         guitar.scale[int].toggleVisibility()
@@ -200,7 +222,8 @@ class Guitar{
         this.distanceBetweenStrings = 40
         this.show ={
             notes: true,
-            intervals: true,
+            intervalSymbols: false,
+            intervalColours: true,
             roots: true,
             focusWindow: false,
         }
@@ -290,8 +313,15 @@ class Guitar{
             string.drawNotes()
         }
     }
+
+    //CKHERE
+    drawIntervalSymbols(){
+        for (const string of this.strings){
+            string.drawIntervalSymbol()
+        }
+    }
    
-    drawIntervals(){
+    drawIntervalColours(){
         for (const fret of this.frets){
             if (fret.interval && fret.interval.isVisible){
                 fret.drawInterval()
@@ -369,9 +399,12 @@ class Guitar{
         this.drawStrings() 
         if (this.show.notes){
             this.drawNotes()
-        } 
+        } else if (this.show.intervalSymbols){
+            this.drawIntervalSymbols()
+        }
+
         this.drawMarks()
-        this.drawIntervals()
+        this.drawIntervalColours()
 
         // ghost
         for (const fret of this.frets){
@@ -424,6 +457,17 @@ class String{
             c.font = noteFont
             c.fillText(fret.note, fret.start.x + metalbarDistance/2 - noteTextDistance.x, this.start.y  - noteTextDistance.y);
             c.fillStyle = 'black'        }
+    }
+
+    drawIntervalSymbol(){
+        for (const fret of this.frets){
+            if (fret.interval){
+                c.fillStyle = noteColour
+                c.font = noteFont
+                c.fillText(fret.interval.symbol, fret.start.x + metalbarDistance/2 - noteTextDistance.x, this.start.y  - noteTextDistance.y);
+                c.fillStyle = 'black'       
+            }
+        }
     }
 
     createFrets(){
@@ -523,19 +567,20 @@ class Fret{
 
 class Scale{
     constructor(){
-        this.root = new PentatoncInterval({steps:0, name:'root'})
-        this.third = new PentatoncInterval({steps:3, name:'third'})
-        this.fourth = new PentatoncInterval({steps:5, name:'fourth'})
-        this.fifth = new PentatoncInterval({steps:7, name:'fifth'})
-        this.seventh = new PentatoncInterval({steps:10, name:'seventh'})
+        this.root = new PentatoncInterval({steps:0, name:'root', symbol: 'I'})
+        this.third = new PentatoncInterval({steps:3, name:'third', symbol: 'III'})
+        this.fourth = new PentatoncInterval({steps:5, name:'fourth', symbol: 'IV'})
+        this.fifth = new PentatoncInterval({steps:7, name:'fifth', symbol: 'V'})
+        this.seventh = new PentatoncInterval({steps:10, name:'seventh', symbol: 'VII'})
     }
 }
 
 
 class PentatoncInterval{
-    constructor({name, steps, colour}){
+    constructor({name, steps, colour, symbol}){
         guitar.scaleNotes.push(this)
         this.name = name
+        this.symbol = symbol
         this.steps = steps
         this.note = undefined
         this.colour = invtervalColours[this.name]
@@ -544,7 +589,7 @@ class PentatoncInterval{
     }
 
     initialColour(){
-        const buttonName = "button_" + this.name + "s"
+        const buttonName = "button_colour_" + this.name
         const button = document.getElementById(buttonName)
         button.style.backgroundColor = this.colour
     }
