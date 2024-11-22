@@ -3,6 +3,7 @@ const c = canvas.getContext('2d')
 
 // document elements
 const modal = document.getElementById('modal')
+const buttonCreateFourStrings = document.getElementById('buttonCreateFourStrings')
 const buttonCreateSixStrings = document.getElementById('buttonCreateSixStrings')
 const buttonCreateEightStrings = document.getElementById('buttonCreateEightStrings')
 
@@ -202,13 +203,17 @@ select.addEventListener('change', ()=>{
 
 
 /// create guitar button
+buttonCreateFourStrings.addEventListener('click',()=>{
+    setupGuitar(4)
+    removeModal()
+})
 buttonCreateSixStrings.addEventListener('click',()=>{
-    setupGuitar(false)
+    setupGuitar(6)
     removeModal()
 })
 
 buttonCreateEightStrings.addEventListener('click',()=>{
-    setupGuitar(true)
+    setupGuitar(8)
     removeModal()
 })
 
@@ -624,8 +629,8 @@ class PentatoncInterval{
 //#region INITIATE
 // create strings
 const guitar = new Guitar()
-function setupGuitar(extraStrings){
-    if (extraStrings){
+function setupGuitar(stringNumber){
+    if (stringNumber === 8){
         const string_fsharp = new String({pitch: 'f#'})
         const string_blow = new String({pitch: 'b'})
     }
@@ -633,8 +638,11 @@ function setupGuitar(extraStrings){
     const string_a = new String({pitch: 'a', thickness: 3})
     const string_d = new String({pitch: 'd', thickness: 3})
     const string_g = new String({pitch: 'g', thickness: 2})
-    const string_b = new String({pitch: 'b', thickness: 2})
-    const string_ehigh = new String({pitch: 'e', thickness: 1})
+    
+    if (stringNumber === 6){
+        const string_b = new String({pitch: 'b', thickness: 2})
+        const string_ehigh = new String({pitch: 'e', thickness: 1})
+    }
 
     guitar.updateDistanceBetweenStrings()
     guitar.createMetalbars()
