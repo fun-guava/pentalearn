@@ -580,7 +580,7 @@ class Fret{
 
 
     drawInterval(){
-        c.fillStyle = this.interval.colour
+        c.fillStyle =  this.interval.colourTransparent
         c.fillRect(
             this.start.x + intervalOverlayOffset.x , 
             this.start.y + intervalOverlayOffset.y, 
@@ -608,7 +608,8 @@ class PentatoncInterval{
         this.symbol = symbol
         this.steps = steps
         this.note = undefined
-        this.colour = intervalColoursSolidEquivalent[this.name]
+        this.colourTransparent = intervalColours[this.name]
+        this.colourSolid = intervalColoursSolidEquivalent[this.name]
         this.isVisible = true
         this.initialColour()
     }
@@ -616,7 +617,7 @@ class PentatoncInterval{
     initialColour(){
         const buttonName = "button_colour_" + this.name
         const button = document.getElementById(buttonName)
-        button.style.backgroundColor = this.colour
+        button.style.backgroundColor = this.colourSolid
     }
 
     toggleVisibility(){
