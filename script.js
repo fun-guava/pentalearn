@@ -146,7 +146,7 @@ buttonColourIntervals.addEventListener('click', ()=>{
     guitar.refreshScreen()
 })
 
-function turn_visibility(direction, ints){
+const turn_visibility = (direction, ints) => {
     for (const int of ints){
         const buttonName = "button_colour_" + int
         const button = document.getElementById(buttonName)
@@ -158,7 +158,7 @@ function turn_visibility(direction, ints){
 }
 
 // create interval buttons (to determine their visibility)
-function listener_interval(int){
+const listener_interval = (int) => {
     const buttonName = "button_colour_" + int
     const button = document.getElementById(buttonName)
     button.addEventListener('click', ()=>{
@@ -217,7 +217,7 @@ buttonCreateEightStrings.addEventListener('click',()=>{
     removeModal()
 })
 
-function removeModal(){
+const removeModal = () => {
     modal.remove()
 }
 
@@ -377,7 +377,7 @@ class Guitar{
         }
     }
 
-    drawFocusWindow(){
+    drawFocusWindow(showOutlineInstead){
         const width = this.focusWindowCentre.end.x - this.focusWindowCentre.start.x
         const height = this.focusWindowCentre.end.y - this.focusWindowCentre.start.y
         const topLeft = {
@@ -397,22 +397,25 @@ class Guitar{
             y: bottomRight.y
         }
 
-        c.fillStyle = focusWindowColour
-        c.fillRect(0,0,canvas.width, topLeft.y)
-        c.fillRect(0,topLeft.y, topLeft.x, bottomLeft.y - topLeft.y)
-        c.fillRect(topRight.x,topRight.y, canvas.width - topRight.x, bottomLeft.y - topLeft.y)
-        c.fillRect(0,bottomLeft.y, canvas.width, canvas.height - bottomLeft.y)
-        /// If you wnant an outline instead
-        // c.lineWidth = 3
-        // c.strokeStyle = focusWindowColour
-        // c.beginPath()
-        // c.moveTo(topLeft.x, topLeft.y)
-        // c.lineTo(topRight.x, topRight.y)
-        // c.lineTo(bottomRight.x, bottomRight.y)
-        // c.lineTo(bottomLeft.x, bottomLeft.y)
-        // c.closePath()
-        // c.stroke()
-        // c.strokeStyle = 'black'
+        if (!showOutlineInstead){
+            c.fillStyle = focusWindowColour
+            c.fillRect(0,0,canvas.width, topLeft.y)
+            c.fillRect(0,topLeft.y, topLeft.x, bottomLeft.y - topLeft.y)
+            c.fillRect(topRight.x,topRight.y, canvas.width - topRight.x, bottomLeft.y - topLeft.y)
+            c.fillRect(0,bottomLeft.y, canvas.width, canvas.height - bottomLeft.y)
+        } else {
+            /// If you wnant an outline instead
+            c.lineWidth = 3
+            c.strokeStyle = focusWindowColour
+            c.beginPath()
+            c.moveTo(topLeft.x, topLeft.y)
+            c.lineTo(topRight.x, topRight.y)
+            c.lineTo(bottomRight.x, bottomRight.y)
+            c.lineTo(bottomLeft.x, bottomLeft.y)
+            c.closePath()
+            c.stroke()
+            c.strokeStyle = 'black'
+        }
     }   
 
     refreshScreen(){
@@ -589,11 +592,11 @@ class Fret{
 
 class Scale{
     constructor(){
-        this.root = new PentatoncInterval({steps:0, name:'root', symbol: 'I'})
-        this.third = new PentatoncInterval({steps:3, name:'third', symbol: 'III'})
-        this.fourth = new PentatoncInterval({steps:5, name:'fourth', symbol: 'IV'})
-        this.fifth = new PentatoncInterval({steps:7, name:'fifth', symbol: 'V'})
-        this.seventh = new PentatoncInterval({steps:10, name:'seventh', symbol: 'VII'})
+        this.root = new PentatoncInterval({steps:0, name:'root', symbol: 'P1'})
+        this.third = new PentatoncInterval({steps:3, name:'third', symbol: 'm3'})
+        this.fourth = new PentatoncInterval({steps:5, name:'fourth', symbol: 'P4'})
+        this.fifth = new PentatoncInterval({steps:7, name:'fifth', symbol: 'P5'})
+        this.seventh = new PentatoncInterval({steps:10, name:'seventh', symbol: 'm7'})
     }
 }
 
@@ -629,7 +632,7 @@ class PentatoncInterval{
 //#region INITIATE
 // create strings
 const guitar = new Guitar()
-function setupGuitar(stringNumber){
+const setupGuitar = (stringNumber) => {
     if (stringNumber === 8){
         const string_fsharp = new String({pitch: 'f#'})
         const string_blow = new String({pitch: 'b'})
