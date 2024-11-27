@@ -608,7 +608,7 @@ class PentatoncInterval{
         this.symbol = symbol
         this.steps = steps
         this.note = undefined
-        this.colour = intervalColours[this.name]
+        this.colour = intervalColoursSolidEquivalent[this.name]
         this.isVisible = true
         this.initialColour()
     }
